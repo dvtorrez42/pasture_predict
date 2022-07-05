@@ -61,14 +61,17 @@ def predict(batch_name):
     # ⚠️ TODO: get model from GCP
 
     # pipeline = get_model_from_gcp()
-    pipeline = joblib.load(f"{batch_name}model.joblib")
+    model = joblib.load(f"{batch_name}model11.joblib")
+    pipeline = joblib.load(f"{batch_name}model1.joblib")
 
     # make prediction
-    results = pipeline.predict(batch_name)
+    results11 = model.predict(batch_name)
+    results1 = pipeline.predict(batch_name)
 
     # convert response from numpy to python type
-    pred = float(results[0])
+    pred11 = float(results11)
+    pred1 = float(results1)
 
     #return batch_name
-    return dict(fare=pred)
+    return True
 # $DELETE_END

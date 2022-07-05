@@ -18,17 +18,20 @@ def get_data(batch_name="vieytes", nrows=10000, optimize=False, **kwargs):
     return df
 
 def clean_data(df):
-    df.rad[df.rad < 0] = np.nan
-    df.temp_2m[(df.temp_2m < -50) | (df.temp_2m < -50)] = np.nan
-    df.temp_sup[(df.temp_sup < -50) | (df.temp_sup < -50)] = np.nan
-    df.hum_arriba[df.hum_arriba < 0] = np.nan
-    df.hum_raiz[df.hum_raiz < 0] = np.nan
+    df.loc[df.rad < 0,'rad'] = np.nan
+    df.loc[(df.temp_2m < -50) | (df.temp_2m < -50),'temp_2m'] = np.nan
+    df.loc[(df.temp_sup < -50) | (df.temp_sup < -50),'temp_sup'] = np.nan
+    df.loc[df.hum_arriba < 0,'hum_arriba'] = np.nan
+    df.loc[df.hum_raiz < 0,'hum_raiz'] = np.nan
 
     df.rad = df.rad.interpolate()
     df.temp_2m = df.temp_2m.interpolate()
     df.temp_sup = df.temp_sup.interpolate()
     df.hum_arriba = df.hum_arriba.interpolate()
     df.hum_raiz = df.hum_raiz.interpolate()
+
+    df.date =  pd.to_datetime(df.date)
+    df = df[df.date < '2022-02-20']
     return df
 
 def make_ma(df):
@@ -57,11 +60,19 @@ def make_ml_approach (df):
     df2 = df2.dropna()
     return df2
 
+def make_acum(df):
+    df2 = df.copy()
+
+    df2['prod_acumulada'] = df2['prod'].rolling(window=11,closed='left').sum().shift(-11)
+    df2 = df2.dropna()
+    return df2
+
 def prepare_data(df):
     df = clean_data(df)
     df = make_ml_approach(df)
     df = make_ma(df)
     df = make_ewma(df)
+    df = make_acum(df)
     return df
 
 if __name__ == '__main__':

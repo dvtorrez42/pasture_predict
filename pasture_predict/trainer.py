@@ -12,15 +12,20 @@ from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from prophet import Prophet
+from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.ensemble import RandomForestRegressor
 
 class Trainer(object):
-    def __init__(self,batch_name,  X, y):
+    def __init__(self,batch_name, df_train,X,y):
         """
             X: pandas DataFrame
             y: pandas Series
         """
-        self.pipeline = None
-        self.bach = batch_name
+        #self.pipeline = None
+        self.model = None
+        self.batch_name = batch_name
+        self.df_train = df_train
         self.X = X
         self.y = y
         # for MLFlow
@@ -50,24 +55,37 @@ class Trainer(object):
         # ], remainder="drop")
         self.pipeline = Pipeline([
         #     ('preproc', preproc_pipe),
-            ('linear_model', LinearRegression())
+            ('model', RandomForestRegressor(n_estimators=40, random_state=0))
         ])
+
+    def set_model(self):
+        self.model = Prophet(seasonality_mode='multiplicative', interval_width=0.95)
 
     def run(self):
         self.set_pipeline()
-        self.mlflow_log_param("model", "LinearRegression")
-        self.pipeline.fit(self.X, self.y)
+        self.set_model()
+        self.mlflow_log_param("model", "Prophet")
+        self.model.fit(self.df_train)
+        self.pipeline.fit(self.X,self.y)
 
-    def evaluate(self, X_test, y_test):
+    def evaluate(self, y11_test, X1_test,y1_test):
         """evaluates the pipeline on df_test and return the RMSE"""
-        y_pred = self.pipeline.predict(X_test)
-        mape = compute_mape(y_pred, y_test)
-        self.mlflow_log_metric("mape", mape)
-        return round(mape, 2)
+        mape = []
+        future = self.model.make_future_dataframe(periods=11, freq='8D')
+        forecast = self.model.predict(future)
+        y11_pred = forecast.yhat[-11:].values
+        mape.append(round(mean_absolute_percentage_error(y11_test, y11_pred),2))
+
+        y1_pred = self.pipeline.predict(X1_test)
+        mape.append(round(mean_absolute_percentage_error(y1_test, y1_pred),2))
+
+        #self.mlflow_log_metric("mape", mape)
+        return mape
 
     def save_model_locally(self):
         """Save the model into a .joblib format"""
-        joblib.dump(self.pipeline, f"{self.batch_name}model.joblib")
+        joblib.dump(self.model, f"{self.batch_name}model11.joblib")
+        joblib.dump(self.pipeline, f"{self.batch_name}model1.joblib")
         print(colored("model.joblib saved locally", "green"))
 
     # MLFlow methods
@@ -96,22 +114,29 @@ class Trainer(object):
 
 if __name__ == "__main__":
     # Get and clean data
-    N = 10000
-    batch_name = "vieytes"
-    df = get_data(batch_name,nrows=N)
+    batch_name = "sanluis"
+    df = get_data(batch_name)
     df = prepare_data(df)
-    y = df["prod"]
-    X = df.drop(columns=['prod','date','ENSOType'])
-    X_train = X[:-22]
-    y_train = y[:-22]
-    X_test = X[-22:]
-    y_test = X[-22:]
+
+    df11 = df.copy()
+    df11 = df11.rename(columns={'date':'ds', 'prod':'y'})
+    df11_train = df11[:-11]
+    y11_test = df11[-11:]['y']
+
+    df1 = df.copy()
+    df1_train = df[:-1]
+    df1_test = df[-1:]
+    X1_train = df1_train.drop(['date', 'prod','ENSOType'],axis=1)
+    y1_train = df1_train['prod']
+    X1_test = df1_test.drop(['date', 'prod','ENSOType'],axis=1)
+    y1_test = df1_test['prod']
 
     # # Train and save model, locally and
-    trainer = Trainer(batch_name,X=X_train, y=y_train)
+    trainer = Trainer(batch_name=batch_name,df_train=df11_train,X=X1_train,y=y1_train)
     trainer.set_experiment_name('xp2')
     trainer.run()
-    mape = trainer.evaluate(X_test, y_test)
-    print(f"mape: {mape}")
+    mape = trainer.evaluate(y11_test,X1_test,y1_test)
+    print(f"mape 11 valores: {mape[0]}")
+    print(f"mape 1 valor acum: {mape[1]}")
     trainer.save_model_locally()
-    storage_upload()
+    storage_upload(filename=batch_name)
