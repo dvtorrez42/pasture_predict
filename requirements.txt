@@ -8,6 +8,8 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
+pystan==2.19.1.1
+prophet
 
 # tests/linter
 black
