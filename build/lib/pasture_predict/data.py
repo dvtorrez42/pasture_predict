@@ -7,36 +7,15 @@ from pasture_predict.params import BUCKET_NAME, BUCKET_DATA_PATH
 
 
 @simple_time_tracker
-def get_data(batch_name="vieytes", type = "data", nrows=10000, optimize=False, **kwargs):
+def get_data(batch_name="vieytes", nrows=10000, optimize=False, **kwargs):
     """method to get the training data (or a portion of it) from google cloud bucket"""
     # Add Client() here
-    if type == "data":
-        dataset_name = f"dataset_completo_{batch_name}.csv"
-
-    if type == "predict_1":
-        dataset_name = f"predict_{batch_name}_1.csv"
-
-    if type == "predict_11":
-        dataset_name = f"predict_{batch_name}_11.csv"
+    dataset_name = f"dataset_completo_{batch_name}.csv"
 
     client = storage.Client()
     path = f"gs://{BUCKET_NAME}/{BUCKET_DATA_PATH}/{dataset_name}"
     df = pd.read_csv(path, nrows=nrows)
     return df
-
-def save_data( dict1 = [], dict11 = [] , filename="vieytes"):
-    """method to save de predict dict to csv"""
-    if len(dict1)>=1:
-        dataset_name = f"prect_{filename}_1"
-        df = pd.DataFrame.from_dict(dict1)
-        df.columns =["data"]
-        df.to_csv (f'raw_data/{dataset_name}.csv', index = False, header=True)
-
-    if len(dict11)>=1:
-        dataset_name = f"prect_{filename}_11"
-        df = pd.DataFrame.from_dict(dict11)
-        df.columns =["data"]
-        df.to_csv (f'raw_data/{dataset_name}.csv', index = False, header=True)
 
 def clean_data(df):
     df.loc[df.rad < 0,'rad'] = np.nan

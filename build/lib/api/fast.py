@@ -9,8 +9,6 @@ import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from pasture_predict.data import get_data
-
 app = FastAPI()
 
 app.add_middleware(
@@ -30,7 +28,7 @@ def index():
 
 
 @app.get("/predict")
-def predict(batch_name, predict=1):
+def predict(batch_name):
 
     # create datetime object from user provided date
     ##pickup_datetime = datetime.strptime(pickup_datetime, "%Y-%m-%d %H:%M:%S")
@@ -63,20 +61,17 @@ def predict(batch_name, predict=1):
     # ⚠️ TODO: get model from GCP
 
     # pipeline = get_model_from_gcp()
-    #model = joblib.load(f"{batch_name}model11.joblib")
-    #pipeline = joblib.load(f"{batch_name}model1.joblib")
+    model = joblib.load(f"{batch_name}model11.joblib")
+    pipeline = joblib.load(f"{batch_name}model1.joblib")
 
     # make prediction
-    #results11 = model.predict(batch_name)
-    #results1 = pipeline.predict(batch_name)
+    results11 = model.predict(batch_name)
+    results1 = pipeline.predict(batch_name)
 
     # convert response from numpy to python type
-    #pred11 = float(results11)
-    #pred1 = float(results1)
-
-    df = get_data(batch_name, f"predict_{predict}")
-    return(df)
+    pred11 = float(results11)
+    pred1 = float(results1)
 
     #return batch_name
-    #return True
+    return True
 # $DELETE_END
