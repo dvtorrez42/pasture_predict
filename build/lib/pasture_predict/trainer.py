@@ -1,7 +1,7 @@
 import joblib
 from termcolor import colored
 import mlflow
-from pasture_predict.data import get_data, save_data, prepare_data
+from pasture_predict.data import get_data, prepare_data
 from pasture_predict.encoders import interpolateEncoder
 from pasture_predict.gcp import storage_upload
 from pasture_predict.utils import compute_mape
@@ -73,11 +73,11 @@ class Trainer(object):
         mape = []
         future = self.model.make_future_dataframe(periods=11, freq='8D')
         forecast = self.model.predict(future)
-        self.y11_pred = forecast.yhat[-11:].values
-        mape.append(round(mean_absolute_percentage_error(y11_test, self.y11_pred),2))
+        y11_pred = forecast.yhat[-11:].values
+        mape.append(round(mean_absolute_percentage_error(y11_test, y11_pred),2))
 
-        self.y1_pred = self.pipeline.predict(X1_test)
-        mape.append(round(mean_absolute_percentage_error(y1_test, self.y1_pred),2))
+        y1_pred = self.pipeline.predict(X1_test)
+        mape.append(round(mean_absolute_percentage_error(y1_test, y1_pred),2))
 
         #self.mlflow_log_metric("mape", mape)
         return mape
@@ -87,13 +87,6 @@ class Trainer(object):
         joblib.dump(self.model, f"{self.batch_name}model11.joblib")
         joblib.dump(self.pipeline, f"{self.batch_name}model1.joblib")
         print(colored("model.joblib saved locally", "green"))
-
-    def save_model_csv(self):
-        """Save the model into a .csv"""
-        save_data( self.y1_pred, self.y11_pred , batch_name)
-        #joblib.dump(self.model, f"{self.batch_name}model11.joblib")
-        #joblib.dump(self.pipeline, f"{self.batch_name}model1.joblib")
-        print(colored("data saved locally", "blue"))
 
     # MLFlow methods
     @memoized_property
@@ -121,7 +114,7 @@ class Trainer(object):
 
 if __name__ == "__main__":
     # Get and clean data
-    batch_name = "vieytes"
+    batch_name = "sanluis"
     df = get_data(batch_name)
     df = prepare_data(df)
 
@@ -146,8 +139,4 @@ if __name__ == "__main__":
     print(f"mape 11 valores: {mape[0]}")
     print(f"mape 1 valor acum: {mape[1]}")
     trainer.save_model_locally()
-    trainer.save_model_csv()
-    storage_upload(filename=batch_name,filetype="joblib")
-    storage_upload(filename=batch_name,filetype="csv")
-
-    df = get_data(batch_name, f"predict_11")
+    storage_upload(filename=batch_name)

@@ -28,7 +28,6 @@ class maEncoder():
     def transform(self, X, y=None):
         assert isinstance(X, pd.DataFrame)
         X_ = X.copy()
-        X_.index = X.index(X)
         X_.rad = X_.rad.interpolate()
         X_.temp_2m = X_.temp_2m.interpolate()
         X_.temp_sup = X_.temp_sup.interpolate()
