@@ -29,3 +29,12 @@ six>=1.14
 joblib
 memoized-property
 termcolor
+
+# Web
+streamlit
+streamlit_option_menu
+# streamlit.components.v1
+streamlit_folium
+# folium
+# common
+# os
