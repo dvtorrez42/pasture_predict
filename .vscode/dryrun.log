@@ -1,0 +1,4 @@
+make: Entering directory `/Users/gabrielcausa/code/pasture_predict/pasture_predict'
+pip install -r requirements.txt
+make: Leaving directory `/Users/gabrielcausa/code/pasture_predict/pasture_predict'
+ 

@@ -25,7 +25,7 @@ with st.sidebar:
     })
 
 if selected == "Limitaciones":
-    st.image("logo.png")
+    st.image("img/logo.png")
     st.markdown(f"{batch}")
     st.markdown('''
 
@@ -39,7 +39,7 @@ if selected == "Limitaciones":
 
 else:
     if selected == "Problema":
-        st.image("logo.png")
+        st.image("img/logo.png")
         st.markdown('''
 
         # Is the grass greener on the other side (of winter)?
@@ -55,7 +55,7 @@ else:
         col3.image('img/img2.JPG')
     else:
         if selected == "Technical approach":
-            st.image("logo.png")
+            st.image("img/logo.png")
 
             col1, col2, col3, col4 = st.columns(4)
             col1.metric('Baseline (año pasado)','0.3','Comentario 1')
