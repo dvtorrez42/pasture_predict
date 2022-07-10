@@ -9,6 +9,14 @@ from common import set_page_container_style
 
 batch = ""
 
+
+st.set_page_config(
+    page_title="Pleasant pasture", # => Quick reference - Streamlit
+    page_icon="🌿",
+    layout="centered", # wide
+    initial_sidebar_state="auto") # collapsed
+    
+    
 query_params = st.experimental_get_query_params()
 if len(query_params)>0:
     batch = query_params["batch"]
