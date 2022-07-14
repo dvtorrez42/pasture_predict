@@ -66,6 +66,14 @@ st.set_page_config(
     layout="centered", # wide
     initial_sidebar_state="auto") # collapsed
 
+
+st.set_page_config(
+    page_title="Pleasant pasture", # => Quick reference - Streamlit
+    page_icon="🌿",
+    layout="centered", # wide
+    initial_sidebar_state="auto") # collapsed
+    
+    
 query_params = st.experimental_get_query_params()
 
 # if len(query_params)>0:
@@ -111,6 +119,7 @@ if selected == "Próximos pasos...":
     #  - Un modelo por lote, no regional.
     #  - Agnóstico de la especie de pastura.
 
+
 else:
     if selected == "Problema":
         st.image("img/logo.png")
@@ -125,6 +134,7 @@ else:
 
     else:
         if selected == "Aspectos técnicos":
+
             st.image("img/logo.png")
 
             st.markdown('''
@@ -144,19 +154,24 @@ else:
                             ### XGBoost
                             ### 0,30''')
                 #st.header('XGBoost')
+
                 #st.metric('','0.30')
             with col3:
+
                 st.markdown('''
                         ### Sarimax
                         ### 0,26''')
                 #st.header('Sarimax')
+
                 #st.metric('','0.26')
+
             with col4:
                 st.markdown('''
                         ### Prophet
                         ### 0,23''')
                 #st.header('Prophet')
                 #st.metric('','0.23')
+
 
             col5, col6 = st.columns([3,15])
 
@@ -182,6 +197,7 @@ else:
 
             col7, col8, col9 = st.columns([5,5,5])
 
+
             with col7:
                     st.markdown('''
                                 ### Baseline
@@ -199,6 +215,7 @@ else:
                         ##### Horizonte temporal: tres meses.
                         ##### Mean Absolute Percentage Error (MAPE).
                         ''')
+
         else:
             if selected == "Solución":
 
@@ -221,6 +238,9 @@ else:
                 else:
                     pass
 
+                st.markdown('''
+                # Plataforma SaaS
+                ''' )
 
                 # if batch != "":
                 #     strbatch = ''.join([s.lower() for s in batch])
