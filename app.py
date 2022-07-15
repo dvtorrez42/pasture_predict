@@ -60,12 +60,6 @@ def show_batch(batch):
     #st.write(df200)
     st.line_chart(df200['kgc_ha'])
 
-st.set_page_config(
-    page_title="Pleasant pasture", # => Quick reference - Streamlit
-    page_icon="??",
-    layout="centered", # wide
-    initial_sidebar_state="auto") # collapsed
-
 
 st.set_page_config(
     page_title="Pleasant pasture", # => Quick reference - Streamlit
