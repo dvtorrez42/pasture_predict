@@ -51,3 +51,7 @@ MODEL_VERSION = 'v1'
 # not required here
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+API_URL = 'http://127.0.0.1:8000/predict'
+
+SITE_URL= 'http://172.28.230.58:8501/'

@@ -19,6 +19,9 @@ def get_data(batch_name="vieytes", type = "data", nrows=10000, optimize=False, *
     if type == "predict_11":
         dataset_name = f"predict_{batch_name}_11.csv"
 
+    if type == "predict_200":
+        dataset_name = f"predict_{batch_name}_200.csv"
+
     client = storage.Client()
     path = f"gs://{BUCKET_NAME}/{BUCKET_DATA_PATH}/{dataset_name}"
     df = pd.read_csv(path, nrows=nrows)
