@@ -23,7 +23,8 @@ def get_data(batch_name="vieytes", type = "data", nrows=10000, optimize=False, *
         dataset_name = f"predict_{batch_name}_200.csv"
 
     client = storage.Client()
-    path = f"gs://{BUCKET_NAME}/{BUCKET_DATA_PATH}/{dataset_name}"
+    ##path = f"gs://{BUCKET_NAME}/{BUCKET_DATA_PATH}/{dataset_name}"
+    path = f"raw_data/{dataset_name}"
     df = pd.read_csv(path, nrows=nrows)
     return df
 
