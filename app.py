@@ -27,7 +27,7 @@ def get_data_api(batch, predict):
     #st.write(response.json())
     data = pd.DataFrame.from_dict(response.json())
     #st.write(strbatch)
-    df = get_data(strbatch, f"predict_{predict}")
+    #df = get_data(strbatch, f"predict_{predict}")
     return(data)
 
 
