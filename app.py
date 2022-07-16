@@ -20,14 +20,15 @@ def get_data_api(batch, predict):
 
     strbatch = ''.join([s.lower() for s in batch])
 
-    #url = f'{API_URL}?batch_name={batch}&predict={predict}'
-    #response = requests.get(url)
-    #if response.status_code != 200:
-    #    return ''
-    #data = pd.DataFrame.from_dict(response.json())
-
+    url = f'{API_URL}/predict?batch_name={batch}&predict={predict}'
+    response = requests.get(url)
+    if response.status_code != 200:
+        return ''
+    #st.write(response.json())
+    data = pd.DataFrame.from_dict(response.json())
+    #st.write(strbatch)
     df = get_data(strbatch, f"predict_{predict}")
-    return(df)
+    return(data)
 
 
 def show_batch(batch):
@@ -37,23 +38,17 @@ def show_batch(batch):
     strbatch = strbatch.replace(' ', '')
 
     df1 = get_data_api(batch, 1)
-    #df1.columns=['ds','yhat','yhat_lower','yhat_upper']
+
     #st.write(df1)
-    # df11 = get_data_api(batch, 11)
-    # st.write(df11)
-    # df11.columns=['ds','yhat','yhat_lower','yhat_upper']
+
     df200 = get_data_api(batch, 200)
+    #st.write(df200)
     df200 = df200.dropna()
 
-    #st.write(df200)
-    df200['ds'] = pd.to_datetime(df200['ds'], format='%d/%m/%Y')
-    # df200 = df200[['ds','prod']]
-    # df200.columns=['ds','yhat','yhat_lower','yhat_upper']
-    # st.markdown(f"""
-    #     # {batch.upper()}
-    # """)
 
-    #col1, col2= st.columns([5,15])
+    df200['ds'] = pd.to_datetime(df200['ds'], format='%d/%m/%Y')
+
+
     st.markdown(f"""
                 ### Pronóstico acumulado: {round(df1.iloc[0,1],3)} Kg C / Ha
                  """)
@@ -61,17 +56,11 @@ def show_batch(batch):
     st.markdown(f"""
                  ### Pronóstico
                  """)
-    #st.write(df200)
+
 
     df11 =df200[df200.yhat_lower >0]
-    #df11.columns=['Fecha','Predicción','I.C.Superior','I.C.Inferior']
+    # #df11.columns=['Fecha','Predicción','I.C.Superior','I.C.Inferior']
 
-    #st.write(df11)
-
-    #st.line_chart(df11[['yhat','yhat_lower','yhat_upper']],1500,200)
-    #st.write(df11)
-    #df=df200[['yhat']][:-11]
-    #st.line_chart(df,1500,200)
 
     df200 = df200[-100:]
     df200['pred']=df200.yhat
@@ -84,9 +73,9 @@ def show_batch(batch):
     df200.columns=['Fecha','Pred','Prod','L.S.','L.I.']
 
     plost.line_chart(
-        data=df200,
-        x='Fecha',
-        y=('Pred','Prod','L.S.','L.I.'))
+         data=df200,
+         x='Fecha',
+         y=('Pred','Prod','L.S.','L.I.'))
 
 st.set_page_config(
     page_title="Pleasant pasture", # => Quick reference - Streamlit
@@ -228,7 +217,7 @@ else:
                 if option == 'San Luis':
                     show_batch('sanluis')
                 elif option == 'Vieytes':
-                    show_batch('Vieytes')
+                    show_batch('vieytes')
                 else:
                     pass
 
