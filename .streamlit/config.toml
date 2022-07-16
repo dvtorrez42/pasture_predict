@@ -163,7 +163,7 @@ showPyplotGlobalUse = true
 [theme]
 
 # The preset Streamlit theme that your custom theme inherits from. One of "light" or "dark".
-# base = 
+base = "our_theme" 
 
 # Primary accent color for interactive elements.
 primaryColor = "#6eb52f" # Cambiar
