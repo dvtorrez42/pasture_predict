@@ -88,8 +88,8 @@ st.set_page_config(
 query_params = st.experimental_get_query_params()
 
 with st.sidebar:
-    selected = option_menu("", ['Problema', 'Quienes Somos',  'Solución', 'Aspectos técnicos', 'Próximos pasos...'],
-        icons=['patch-question','people-fill','activity','tools','signpost'], menu_icon="cast", default_index=default_index,
+    selected = option_menu("", ['Quiénes Somos', 'Problema',  'Solución', 'Aspectos técnicos', 'Próximos pasos...'],
+        icons=['people-fill','patch-question','activity','tools','signpost'], menu_icon="cast", default_index=default_index,
         styles={
         "container": {"padding": "5!important", "background-color": "#fafafa"},
         "icon": {"color": "green", "font-size": "25px"},
@@ -101,11 +101,11 @@ if selected =="Arquitectura":
     st.image("img/logo.png")
     st.header("Aspectos Técnicos")
 
-if selected == 'Quienes Somos':
+if selected == 'Quiénes Somos':
     st.image("img/logo.png")
     st.markdown(f"{batch}")
 
-    st.header("Quienes Somos")
+    st.header("Quiénes Somos")
 
     col1, col2, col3, col4 = st.columns([4,4,4,4])
 
@@ -143,7 +143,7 @@ else:
     if selected == "Problema":
         st.image("img/logo.png")
         st.title('')
-        st.markdown('<h1 style="text-align: center;">¿Es el pasto verde después del invierno?</h1>', unsafe_allow_html=True)
+        st.markdown('<h1 style="text-align: center;">¿Es el pasto más verde después del invierno?</h1>', unsafe_allow_html=True)
 
 
         col1, col2, col3 = st.columns(3)
