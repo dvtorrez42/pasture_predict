@@ -1,3 +1,4 @@
+from cmath import nan
 import streamlit as st
 from streamlit_option_menu import option_menu
 from streamlit_folium import folium_static
@@ -9,6 +10,8 @@ from streamlit.components.v1 import html
 from common import set_page_container_style
 import requests
 from pasture_predict.data import get_data
+import plost
+import numpy as np
 
 batch = ""
 default_index = 0
@@ -31,34 +34,59 @@ def show_batch(batch):
 
     strbatch = ''.join([s.lower() for s in batch])
 
+    strbatch = strbatch.replace(' ', '')
+
     df1 = get_data_api(batch, 1)
-    df1.columns=['kgc_ha']
-    df11 = get_data_api(batch, 11)
-    df11.columns=['kgc_ha']
+    #df1.columns=['ds','yhat','yhat_lower','yhat_upper']
+    #st.write(df1)
+    # df11 = get_data_api(batch, 11)
+    # st.write(df11)
+    # df11.columns=['ds','yhat','yhat_lower','yhat_upper']
     df200 = get_data_api(batch, 200)
     df200 = df200.dropna()
-    df200['date'] = pd.to_datetime(df200['date'], format='%Y-%m-%d')
-    df200 = df200[['date','prod']]
-    df200.columns = ['date','kgc_ha']
+
+    #st.write(df200)
+    df200['ds'] = pd.to_datetime(df200['ds'], format='%d/%m/%Y')
+    # df200 = df200[['ds','prod']]
+    # df200.columns=['ds','yhat','yhat_lower','yhat_upper']
     # st.markdown(f"""
     #     # {batch.upper()}
-    #     """)
+    # """)
 
     #col1, col2= st.columns([5,15])
     st.markdown(f"""
-                ### Pronóstico acumulado: {round(df1.iloc[0,0],3)} Kg C / Ha
-                """)
+                ### Pronóstico acumulado: {round(df1.iloc[0,1],3)} Kg C / Ha
+                 """)
 
     st.markdown(f"""
-                ### Pronóstico
-                """)
-    st.line_chart(df11,1500,200)
-
-    st.markdown(f"""
-                ### Datos historicos
-                """)
+                 ### Pronóstico
+                 """)
     #st.write(df200)
-    st.line_chart(df200['kgc_ha'])
+
+    df11 =df200[df200.yhat_lower >0]
+    #df11.columns=['Fecha','Predicción','I.C.Superior','I.C.Inferior']
+
+    #st.write(df11)
+
+    #st.line_chart(df11[['yhat','yhat_lower','yhat_upper']],1500,200)
+    #st.write(df11)
+    #df=df200[['yhat']][:-11]
+    #st.line_chart(df,1500,200)
+
+    df200 = df200[-100:]
+    df200['pred']=df200.yhat
+    df200.pred[:-11] = np.nan
+    df200.yhat[-10:] = np.nan
+    df200.yhat_upper[df200.yhat_upper==0] = np.nan
+    df200.yhat_lower[df200.yhat_lower==0] = np.nan
+    df200.yhat_lower[df200.yhat_lower<0] = 0
+
+    df200.columns=['Fecha','Pred','Prod','L.S.','L.I.']
+
+    plost.line_chart(
+        data=df200,
+        x='Fecha',
+        y=('Pred','Prod','L.S.','L.I.'))
 
 
 st.set_page_config(
@@ -69,23 +97,6 @@ st.set_page_config(
     
     
 query_params = st.experimental_get_query_params()
-
-# if len(query_params)>0:
-#     batch = query_params["batch"]
-#     if (batch!=""):
-#         default_index = 1
-#         df1 = get_data_api(batch, 1)
-#         df1.columns=['p']
-#         df11 = get_data_api(batch, 11)
-#         df11.columns=['p']
-#         df200 = get_data_api(batch, 200)
-#         df200 = df200.dropna()
-#         df200['date'] = pd.to_datetime(df200['date'], format='%Y-%m-%d')
-#         df200 = df200[['date','prod']]
-# else:
-#     df1 = get_data_api(batch, 1)
-#     df11 = get_data_api(batch, 11)
-#     #df200 = get_data_api(batch, 200)
 
 with st.sidebar:
     selected = option_menu("", ['Problema','Solución', 'Aspectos técnicos', 'Próximos pasos...'],
@@ -226,7 +237,7 @@ else:
                 option = st.selectbox('', ('San Luis', 'Vieytes'))
                # with col2:
                 if option == 'San Luis':
-                    show_batch('San Luis')
+                    show_batch('sanluis')
                 elif option == 'Vieytes':
                     show_batch('Vieytes')
                 else:
