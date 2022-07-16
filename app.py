@@ -70,12 +70,14 @@ def show_batch(batch):
     df200.yhat_lower[df200.yhat_lower==0] = np.nan
     df200.yhat_lower[df200.yhat_lower<0] = 0
 
-    df200.columns=['Fecha','Pred','Prod','L.S.','L.I.']
+    #st.write(df200)
+
+    df200.columns=['Fecha','Prod','L.S.','L.I.','Pred']
 
     plost.line_chart(
          data=df200,
          x='Fecha',
-         y=('Pred','Prod','L.S.','L.I.'))
+         y=('Prod','Pred','L.S.','L.I.'))
 
 st.set_page_config(
     page_title="Pleasant pasture", # => Quick reference - Streamlit
@@ -86,14 +88,40 @@ st.set_page_config(
 query_params = st.experimental_get_query_params()
 
 with st.sidebar:
-    selected = option_menu("", ['Problema','Solución', 'Aspectos técnicos', 'Próximos pasos...'],
-        icons=['patch-question', 'activity','tools','signpost'], menu_icon="cast", default_index=default_index,
+    selected = option_menu("", ['Problema', 'Quienes Somos',  'Solución', 'Aspectos técnicos', 'Próximos pasos...'],
+        icons=['patch-question','people-fill','activity','tools','signpost'], menu_icon="cast", default_index=default_index,
         styles={
         "container": {"padding": "5!important", "background-color": "#fafafa"},
         "icon": {"color": "green", "font-size": "25px"},
         "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
         "nav-link-selected": {"background-color": "#02ab21"},
     })
+
+if selected =="Arquitectura":
+    st.image("img/logo.png")
+    st.header("Aspectos Técnicos")
+
+if selected == 'Quienes Somos':
+    st.image("img/logo.png")
+    st.markdown(f"{batch}")
+
+    st.header("Quienes Somos")
+
+    col1, col2, col3, col4 = st.columns([4,4,4,4])
+
+    col1.image("img/DaniV.jpg")
+    col1.markdown('<div style="text-align: center;">Daniel Villarroel</div>', unsafe_allow_html=True)
+
+    col2.image("img/danib.jpg")
+    col2.markdown('<div style="text-align: center;">Daniela Brondino</div>', unsafe_allow_html=True)
+
+    col3.image("img/GabiC.jpg")
+    col3.markdown('<div style="text-align: center;">Gabriel Causa</div>', unsafe_allow_html=True)
+
+    col4.image("img/Lucho.jpg")
+    col4.markdown('<div style="text-align: center;">Luciano Valente</div>', unsafe_allow_html=True)
+
+
 
 if selected == "Próximos pasos...":
     st.image("img/logo.png")
@@ -114,13 +142,13 @@ if selected == "Próximos pasos...":
 else:
     if selected == "Problema":
         st.image("img/logo.png")
-        st.markdown('''
-        # Is the grass greener on the other side (of winter)?
-        ''' )
+        st.title('')
+        st.markdown('<h1 style="text-align: center;">¿Es el pasto verde después del invierno?</h1>', unsafe_allow_html=True)
+
 
         col1, col2, col3 = st.columns(3)
         col1.image('img/img1.JPG')
-        col2.image('img/img3.JPG')
+        #col2.image('img/img3.JPG')
         col3.image('img/img2.JPG')
 
     else:
