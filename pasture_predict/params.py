@@ -52,6 +52,6 @@ MODEL_VERSION = 'v1'
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-API_URL = 'http://127.0.0.1:8000/predict'
+API_URL = 'https://pasturepredict-oxuqouwnma-ew.a.run.app'
 
 SITE_URL= 'http://172.28.230.58:8501/'
